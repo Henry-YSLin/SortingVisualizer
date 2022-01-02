@@ -1,5 +1,7 @@
-﻿using System;
+﻿using SortingVisualizer.Algorithms;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -10,8 +12,10 @@ namespace SortingVisualizer
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IVisualizer
     {
+        private readonly List<LineGeometry> lines = new();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -19,31 +23,32 @@ namespace SortingVisualizer
 
         private void render(int[] array)
         {
-            var gg = new GeometryGroup();
+            var group = new GeometryGroup();
+            lines.Clear();
+            var height = GridVisualizer.ActualHeight;
 
             for (int i = 0; i < array.Length; i++)
             {
-                Point p0 = new Point(i, 1000 - array[i]);
-                Point p1 = new Point(i, 1000);
+                Point p0 = new(i, height - array[i]);
+                Point p1 = new(i, height);
                 var lineGeometry = new LineGeometry(p0, p1);
 
-                gg.Children.Add(lineGeometry);
+                group.Children.Add(lineGeometry);
+                lines.Add(lineGeometry);
             }
 
-            var stroke = new SolidColorBrush(Colors.Red);
+            SolidColorBrush stroke = new(Colors.Red);
 
-            gg.Freeze();
-            stroke.Freeze();
-
-            Content = new Path()
+            GridVisualizer.Children.Clear();
+            GridVisualizer.Children.Add(new Path()
             {
-                Data = gg,
+                Data = group,
                 Stroke = stroke,
                 SnapsToDevicePixels = true
-            };
+            });
         }
 
-        IVisualizable algorithm = new PartitionedSort();
+        IVisualizable algorithm = new NonrecursiveMergeSort();
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -53,15 +58,18 @@ namespace SortingVisualizer
             {
                 array[i] = rnd.Next(1000);
             }
-            await foreach (int[] snapshot in algorithm.Run(array, async array =>
-            {
-                await Task.Delay(1);
-                return (int[])array.Clone();
-            }))
+            // array = array.OrderBy(x => x).Select(x => x + rnd.Next(50) - 25).ToArray();
+            render(await NewFrame(array));
+            await foreach (int[] snapshot in algorithm.Run(array, this))
             {
                 render(snapshot);
-                await Task.Delay(1);
             }
+        }
+
+        public async Task<int[]> NewFrame(int[] array)
+        {
+            await Task.Delay(1);
+            return array.ToArray();
         }
     }
 }

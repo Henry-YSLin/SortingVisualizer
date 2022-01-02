@@ -8,7 +8,18 @@
         Title="MainWindow" Height="450" Width="800"
         WindowState="Maximized"
         Loaded="Window_Loaded">
-    <Grid>
+    <Grid RenderOptions.EdgeMode="Aliased">
+        <TabControl>
+            <TabItem Header="Visualizer">
+                <Grid Name="GridVisualizer">
 
+                </Grid>
+            </TabItem>
+            <TabItem Header="Benchmarker">
+                <Grid>
+
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

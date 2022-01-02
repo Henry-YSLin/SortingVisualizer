@@ -6,6 +6,6 @@ namespace SortingVisualizer
 {
     internal interface IVisualizable
     {
-        public IAsyncEnumerable<int[]> Run(int[] array, Func<int[], Task<int[]>> snapshot);
+        public IAsyncEnumerable<int[]> Run(int[] array, IVisualizer visualizer);
     }
 }

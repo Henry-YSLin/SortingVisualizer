@@ -21,13 +21,13 @@ namespace SortingVisualizer
             return processedArray;
         }
 
-        public async IAsyncEnumerable<int[]> Run(int[] array, Func<int[], Task<int[]>> snapshot)
+        public async IAsyncEnumerable<int[]> Run(int[] array, IVisualizer visualizer)
         {
-            yield return await snapshot(array);
+            yield return await visualizer.NewFrame(array);
             await Task.Delay(2000);
 
             array = partition(array, 20);
-            yield return await snapshot(array);
+            yield return await visualizer.NewFrame(array);
             await Task.Delay(2000);
 
             for (int i = 1; i < 1000; i++)
@@ -41,7 +41,7 @@ namespace SortingVisualizer
                         array[j + 1] = array[j];
                         j--;
                         array[j + 1] = val;
-                        yield return await snapshot(array);
+                        yield return await visualizer.NewFrame(array);
                     }
                     else done = true;
                 }
