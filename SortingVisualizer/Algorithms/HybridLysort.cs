@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace SortingVisualizer.Algorithms
 {
     internal class HybridLysort : IVisualizable
     {
+        public string Name => "Hybrid Lysort";
         private void merge(Span<int> run1, Span<int> run2, Span<int> destination)
         {
             int i1 = 0;
@@ -42,7 +45,7 @@ namespace SortingVisualizer.Algorithms
 
         const int RUN_LENGTH_THRESHOLD = 50;
 
-        public async IAsyncEnumerable<int[]> Run(int[] array, IVisualizer visualizer)
+        public async IAsyncEnumerable<int[]> Run(int[] array, IVisualizer visualizer, [EnumeratorCancellation] CancellationToken token)
         {
             List<RunSlice> runs = new List<RunSlice>();
             int startIndex = 0;
@@ -71,6 +74,7 @@ namespace SortingVisualizer.Algorithms
                 if (run.isReversed)
                 {
                     array.AsSpan().Slice(run.startIndex, run.length).Reverse();
+                    token.ThrowIfCancellationRequested();
                     yield return await visualizer.NewFrame(array);
                 }
             }
@@ -99,6 +103,7 @@ namespace SortingVisualizer.Algorithms
                     for (int j = 0; j < runsToMerge; j++)
                         runs.RemoveAt(i);
                     runs.Insert(i, new RunSlice { startIndex = start, length = length, isReversed = false });
+                    token.ThrowIfCancellationRequested();
                     yield return await visualizer.NewFrame(sorted);
                 }
             }

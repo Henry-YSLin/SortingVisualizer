@@ -2,7 +2,7 @@
 
 namespace SortingVisualizer
 {
-    internal interface IVisualizer
+    public interface IVisualizer
     {
         public Task<int[]> NewFrame(int[] array);
     }

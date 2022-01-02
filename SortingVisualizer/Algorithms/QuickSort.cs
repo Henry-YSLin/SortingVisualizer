@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace SortingVisualizer.Algorithms
 {
     internal class QuickSort : IVisualizable
     {
-        public async IAsyncEnumerable<int[]> Run(int[] array, IVisualizer visualizer)
+        public string Name => "Quick Sort";
+        public async IAsyncEnumerable<int[]> Run(int[] array, IVisualizer visualizer, [EnumeratorCancellation] CancellationToken token)
         {
             foreach (int[] snapshot in quickSort(array, 0, array.Length - 1, visualizer))
             {
+                token.ThrowIfCancellationRequested();
                 yield return await visualizer.NewFrame(array);
             }
             yield return await visualizer.NewFrame(array);

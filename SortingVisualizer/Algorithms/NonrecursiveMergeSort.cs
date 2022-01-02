@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace SortingVisualizer.Algorithms
 {
     internal class NonrecursiveMergeSort : IVisualizable
     {
+        public string Name => "Non-recursive Merge Sort";
         private void merge(Span<int> run1, Span<int> run2, Span<int> destination)
         {
             int i1 = 0;
@@ -40,7 +43,7 @@ namespace SortingVisualizer.Algorithms
                 run2[i] = destination[i + run1.Length];
         }
 
-        public async IAsyncEnumerable<int[]> Run(int[] array, IVisualizer visualizer)
+        public async IAsyncEnumerable<int[]> Run(int[] array, IVisualizer visualizer, [EnumeratorCancellation] CancellationToken token)
         {
             int sliceSize = 1;
             int[] sorted = array.ToArray();
@@ -49,6 +52,7 @@ namespace SortingVisualizer.Algorithms
                 for (int i = 0; i + sliceSize < array.Length; i += sliceSize * 2)
                 {
                     merge(array.AsSpan().Slice(i, sliceSize), array.AsSpan().Slice(i + sliceSize, Math.Min(sliceSize, array.Length - i - sliceSize)), sorted.AsSpan().Slice(i, Math.Min(sliceSize * 2, array.Length - i)));
+                    token.ThrowIfCancellationRequested();
                     yield return await visualizer.NewFrame(sorted);
                 }
                 sliceSize *= 2;
