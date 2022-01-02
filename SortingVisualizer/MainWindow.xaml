@@ -7,7 +7,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
         xmlns:behaviours="clr-namespace:SortingVisualizer.Utilities"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="Sorting Visualizer" Height="450" Width="800"
         WindowState="Maximized"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Grid RenderOptions.EdgeMode="Aliased">
