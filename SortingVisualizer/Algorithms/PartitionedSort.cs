@@ -36,7 +36,7 @@ namespace SortingVisualizer
             yield return await visualizer.NewFrame(array);
             await Task.Delay(2000);
 
-            for (int i = 1; i < 1000; i++)
+            for (int i = 1; i < array.Length; i++)
             {
                 var val = array[i];
                 bool done = false;

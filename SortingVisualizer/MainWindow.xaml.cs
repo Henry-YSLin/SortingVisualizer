@@ -1,4 +1,5 @@
 ﻿using SortingVisualizer.Algorithms;
+using SortingVisualizer.ArrayGenerators;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,8 +20,14 @@ namespace SortingVisualizer
     {
         private readonly List<LineGeometry> lines = new();
         private readonly AlgorithmRepository algorithmRepository = new();
+        private readonly ArrayGeneratorRepository arrayGeneratorRepository = new();
 
         public List<IVisualizable> Algorithms => algorithmRepository.Algorithms;
+        public List<ArrayGenerator> Generators => arrayGeneratorRepository.Generators;
+        public bool IsPaused { get; set; }
+        public IVisualizable Algorithm { get; set; }
+        public ArrayGenerator Generator { get; set; }
+        public int ArrayLength { get; set; }
 
         public MainWindow()
         {
@@ -35,7 +42,7 @@ namespace SortingVisualizer
 
             for (int i = 0; i < array.Length; i++)
             {
-                Point p0 = new(i, height - array[i]);
+                Point p0 = new(i, height - array[i] * height / array.Length);
                 Point p1 = new(i, height);
                 var lineGeometry = new LineGeometry(p0, p1);
 
@@ -54,21 +61,14 @@ namespace SortingVisualizer
             });
         }
 
-        IVisualizable algorithm = new NonrecursiveMergeSort();
         CancellationTokenSource cancellation;
 
-        private async Task runVisualization(IVisualizable algorithm, CancellationToken token)
+        private async Task runVisualization(CancellationToken token)
         {
-            int[] array = new int[1000];
-            Random rnd = new Random();
-            for (int i = 0; i < array.Length; i++)
-            {
-                array[i] = rnd.Next(1000);
-            }
-            // array = array.OrderBy(x => x).Select(x => x + rnd.Next(50) - 25).ToArray();
-            render(await NewFrame(array));
+            int[] array = Generator.Generate(ArrayLength);
+            render(array);
             token.ThrowIfCancellationRequested();
-            await foreach (int[] snapshot in algorithm.Run(array, this, token))
+            await foreach (int[] snapshot in Algorithm.Run(array, this, token))
             {
                 render(snapshot);
                 token.ThrowIfCancellationRequested();
@@ -78,13 +78,14 @@ namespace SortingVisualizer
         public async Task<int[]> NewFrame(int[] array)
         {
             await Task.Delay(1);
+            while (IsPaused)
+                await Task.Delay(25);
             return array.ToArray();
         }
 
-        private async void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private async void ButtonVisualize_Click(object sender, RoutedEventArgs e)
         {
-            IVisualizable? algorithm = ((ComboBox)sender).SelectedItem as IVisualizable;
-            if (algorithm == null) return;
+            if (Algorithm == null) return;
             if (cancellation != null)
             {
                 cancellation.Cancel();
@@ -92,7 +93,7 @@ namespace SortingVisualizer
             cancellation = new CancellationTokenSource();
             try
             {
-                await runVisualization(algorithm, cancellation.Token);
+                await runVisualization(cancellation.Token);
             }
             catch (OperationCanceledException) { }
         }

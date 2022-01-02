@@ -3,7 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SortingVisualizer"
+        xmlns:local="clr-namespace:SortingVisualizer" 
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+        xmlns:behaviours="clr-namespace:SortingVisualizer.Utilities"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         WindowState="Maximized"
@@ -13,17 +15,40 @@
             <TabItem Header="Visualizer">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="200"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <StackPanel Orientation="Vertical" Grid.Column="0">
-                        <ComboBox ItemsSource="{Binding Algorithms}" SelectionChanged="ComboBox_SelectionChanged">
+                    <StackPanel Orientation="Vertical" Grid.Column="0" Margin="5">
+                        <TextBlock>Algorithm:</TextBlock>
+                        <ComboBox 
+                            Name="ComboAlgorithms" 
+                            ItemsSource="{Binding Algorithms}" 
+                            SelectedItem="{Binding Algorithm, Mode=TwoWay}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Name}" />
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
+                        <TextBlock>Array:</TextBlock>
+                        <ComboBox 
+                            Name="ComboArrayGenerators" 
+                            ItemsSource="{Binding Generators}" 
+                            SelectedItem="{Binding Generator, Mode=TwoWay}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <TextBlock>Array size:</TextBlock>
+                        <TextBox Name="TextBoxArrayLength" Text="{Binding ArrayLength, Mode=TwoWay}">
+                            <i:Interaction.Behaviors>
+                                <behaviours:TextBoxInputRegExBehaviour RegularExpression="^\d+$" MaxLength="6" EmptyValue="0" />
+                            </i:Interaction.Behaviors>
+                        </TextBox>
+                        <ToggleButton Margin="0 5 0 0" IsChecked="{Binding IsPaused}">Pause</ToggleButton>
+                        <Button Margin="0 5 0 0" Click="ButtonVisualize_Click" Name="ButtonVisualize">Visualize</Button>
                     </StackPanel>
                     <Grid Grid.Column="1" Name="GridVisualizer"></Grid>
                 </Grid>
