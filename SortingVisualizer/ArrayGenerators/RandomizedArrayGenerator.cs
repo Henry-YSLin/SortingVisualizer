@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace SortingVisualizer.ArrayGenerators
+namespace SortingVisualizer.ArrayGenerators;
+
+public abstract class RandomizedArrayGenerator : ArrayGenerator
 {
-    public abstract class RandomizedArrayGenerator : ArrayGenerator
+    protected Random? Random;
+    public void SetRandom(Random random)
     {
-        protected Random? random;
-        public void SetRandom(Random random)
-        {
-            this.random = random;
-        }
+        this.Random = random;
     }
 }

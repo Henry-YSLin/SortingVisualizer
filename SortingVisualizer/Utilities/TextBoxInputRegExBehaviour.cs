@@ -5,175 +5,173 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 
-namespace SortingVisualizer.Utilities
+namespace SortingVisualizer.Utilities;
+
+/// <summary>
+///     Regular expression for TextBox with properties:
+///         <see cref="RegularExpression"/>,
+///         <see cref="MaxLength"/>,
+///         <see cref="EmptyValue"/>.
+/// </summary>
+public class TextBoxInputRegExBehaviour : Behavior<TextBox>
 {
-    /// <summary>
-    ///     Regular expression for Textbox with properties: 
-    ///         <see cref="RegularExpression"/>, 
-    ///         <see cref="MaxLength"/>,
-    ///         <see cref="EmptyValue"/>.
-    /// </summary>
-    public class TextBoxInputRegExBehaviour : Behavior<TextBox>
+    #region DependencyProperties
+    public static readonly DependencyProperty REGULAR_EXPRESSION_PROPERTY =
+        DependencyProperty.Register("RegularExpression", typeof(string), typeof(TextBoxInputRegExBehaviour), new FrameworkPropertyMetadata(".*"));
+
+    public string RegularExpression
     {
-        #region DependencyProperties
-        public static readonly DependencyProperty RegularExpressionProperty =
-            DependencyProperty.Register("RegularExpression", typeof(string), typeof(TextBoxInputRegExBehaviour), new FrameworkPropertyMetadata(".*"));
+        get => (string)GetValue(REGULAR_EXPRESSION_PROPERTY);
+        set => SetValue(REGULAR_EXPRESSION_PROPERTY, value);
+    }
 
-        public string RegularExpression
+    public static readonly DependencyProperty MAX_LENGTH_PROPERTY =
+        DependencyProperty.Register("MaxLength", typeof(int), typeof(TextBoxInputRegExBehaviour),
+            new FrameworkPropertyMetadata(int.MinValue));
+
+    public int MaxLength
+    {
+        get => (int)GetValue(MAX_LENGTH_PROPERTY);
+        set => SetValue(MAX_LENGTH_PROPERTY, value);
+    }
+
+    public static readonly DependencyProperty EMPTY_VALUE_PROPERTY =
+        DependencyProperty.Register("EmptyValue", typeof(string), typeof(TextBoxInputRegExBehaviour), null);
+
+    public string EmptyValue
+    {
+        get => (string)GetValue(EMPTY_VALUE_PROPERTY);
+        set => SetValue(EMPTY_VALUE_PROPERTY, value);
+    }
+    #endregion
+
+    /// <summary>
+    ///     Attach our behaviour. Add event handlers
+    /// </summary>
+    protected override void OnAttached()
+    {
+        base.OnAttached();
+
+        AssociatedObject.PreviewTextInput += previewTextInputHandler;
+        AssociatedObject.PreviewKeyDown += previewKeyDownHandler;
+        DataObject.AddPastingHandler(AssociatedObject, pastingHandler);
+    }
+
+    /// <summary>
+    ///     Deattach our behaviour. remove event handlers
+    /// </summary>
+    protected override void OnDetaching()
+    {
+        base.OnDetaching();
+
+        AssociatedObject.PreviewTextInput -= previewTextInputHandler;
+        AssociatedObject.PreviewKeyDown -= previewKeyDownHandler;
+        DataObject.RemovePastingHandler(AssociatedObject, pastingHandler);
+    }
+
+    #region Event handlers [PRIVATE] --------------------------------------
+
+    void previewTextInputHandler(object sender, TextCompositionEventArgs e)
+    {
+        string text;
+        if (this.AssociatedObject.Text.Length < this.AssociatedObject.CaretIndex)
+            text = this.AssociatedObject.Text;
+        else
         {
-            get { return (string)GetValue(RegularExpressionProperty); }
-            set { SetValue(RegularExpressionProperty, value); }
+            //  Remaining text after removing selected text.
+
+            text = treatSelectedText(out var remainingTextAfterRemoveSelection)
+                ? remainingTextAfterRemoveSelection.Insert(AssociatedObject.SelectionStart, e.Text)
+                : AssociatedObject.Text.Insert(this.AssociatedObject.CaretIndex, e.Text);
         }
 
-        public static readonly DependencyProperty MaxLengthProperty =
-            DependencyProperty.Register("MaxLength", typeof(int), typeof(TextBoxInputRegExBehaviour),
-                                            new FrameworkPropertyMetadata(int.MinValue));
+        e.Handled = !validateText(text);
+    }
 
-        public int MaxLength
+    /// <summary>
+    ///     PreviewKeyDown event handler
+    /// </summary>
+    void previewKeyDownHandler(object sender, KeyEventArgs e)
+    {
+        if (string.IsNullOrEmpty(this.EmptyValue))
+            return;
+
+        string text = null;
+
+        // Handle the Backspace key
+        if (e.Key == Key.Back)
         {
-            get { return (int)GetValue(MaxLengthProperty); }
-            set { SetValue(MaxLengthProperty, value); }
-        }
-
-        public static readonly DependencyProperty EmptyValueProperty =
-            DependencyProperty.Register("EmptyValue", typeof(string), typeof(TextBoxInputRegExBehaviour), null);
-
-        public string EmptyValue
-        {
-            get { return (string)GetValue(EmptyValueProperty); }
-            set { SetValue(EmptyValueProperty, value); }
-        }
-        #endregion
-
-        /// <summary>
-        ///     Attach our behaviour. Add event handlers
-        /// </summary>
-        protected override void OnAttached()
-        {
-            base.OnAttached();
-
-            AssociatedObject.PreviewTextInput += PreviewTextInputHandler;
-            AssociatedObject.PreviewKeyDown += PreviewKeyDownHandler;
-            DataObject.AddPastingHandler(AssociatedObject, PastingHandler);
-        }
-
-        /// <summary>
-        ///     Deattach our behaviour. remove event handlers
-        /// </summary>
-        protected override void OnDetaching()
-        {
-            base.OnDetaching();
-
-            AssociatedObject.PreviewTextInput -= PreviewTextInputHandler;
-            AssociatedObject.PreviewKeyDown -= PreviewKeyDownHandler;
-            DataObject.RemovePastingHandler(AssociatedObject, PastingHandler);
-        }
-
-        #region Event handlers [PRIVATE] --------------------------------------
-
-        void PreviewTextInputHandler(object sender, TextCompositionEventArgs e)
-        {
-            string text;
-            if (this.AssociatedObject.Text.Length < this.AssociatedObject.CaretIndex)
-                text = this.AssociatedObject.Text;
-            else
+            if (!this.treatSelectedText(out text))
             {
-                //  Remaining text after removing selected text.
-                string remainingTextAfterRemoveSelection;
-
-                text = TreatSelectedText(out remainingTextAfterRemoveSelection)
-                    ? remainingTextAfterRemoveSelection.Insert(AssociatedObject.SelectionStart, e.Text)
-                    : AssociatedObject.Text.Insert(this.AssociatedObject.CaretIndex, e.Text);
+                if (AssociatedObject.SelectionStart > 0)
+                    text = this.AssociatedObject.Text.Remove(AssociatedObject.SelectionStart - 1, 1);
             }
-
-            e.Handled = !ValidateText(text);
+        }
+        // Handle the Delete key
+        else if (e.Key == Key.Delete)
+        {
+            // If text was selected, delete it
+            if (!this.treatSelectedText(out text) && this.AssociatedObject.Text.Length > AssociatedObject.SelectionStart)
+            {
+                // Otherwise delete next symbol
+                text = this.AssociatedObject.Text.Remove(AssociatedObject.SelectionStart, 1);
+            }
         }
 
-        /// <summary>
-        ///     PreviewKeyDown event handler
-        /// </summary>
-        void PreviewKeyDownHandler(object sender, KeyEventArgs e)
+        if (text == string.Empty)
         {
-            if (string.IsNullOrEmpty(this.EmptyValue))
-                return;
-
-            string text = null;
-
-            // Handle the Backspace key
+            this.AssociatedObject.Text = this.EmptyValue;
             if (e.Key == Key.Back)
-            {
-                if (!this.TreatSelectedText(out text))
-                {
-                    if (AssociatedObject.SelectionStart > 0)
-                        text = this.AssociatedObject.Text.Remove(AssociatedObject.SelectionStart - 1, 1);
-                }
-            }
-            // Handle the Delete key
-            else if (e.Key == Key.Delete)
-            {
-                // If text was selected, delete it
-                if (!this.TreatSelectedText(out text) && this.AssociatedObject.Text.Length > AssociatedObject.SelectionStart)
-                {
-                    // Otherwise delete next symbol
-                    text = this.AssociatedObject.Text.Remove(AssociatedObject.SelectionStart, 1);
-                }
-            }
-
-            if (text == string.Empty)
-            {
-                this.AssociatedObject.Text = this.EmptyValue;
-                if (e.Key == Key.Back)
-                    AssociatedObject.SelectionStart++;
-                e.Handled = true;
-            }
+                AssociatedObject.SelectionStart++;
+            e.Handled = true;
         }
+    }
 
-        private void PastingHandler(object sender, DataObjectPastingEventArgs e)
+    private void pastingHandler(object sender, DataObjectPastingEventArgs e)
+    {
+        if (e.DataObject.GetDataPresent(DataFormats.Text))
         {
-            if (e.DataObject.GetDataPresent(DataFormats.Text))
-            {
-                string text = Convert.ToString(e.DataObject.GetData(DataFormats.Text));
+            string text = Convert.ToString(e.DataObject.GetData(DataFormats.Text));
 
-                if (!ValidateText(text))
-                    e.CancelCommand();
-            }
-            else
+            if (!validateText(text))
                 e.CancelCommand();
         }
-        #endregion Event handlers [PRIVATE] -----------------------------------
-
-        #region Auxiliary methods [PRIVATE] -----------------------------------
-
-        /// <summary>
-        ///     Validate certain text by our regular expression and text length conditions
-        /// </summary>
-        /// <param name="text"> Text for validation </param>
-        /// <returns> True - valid, False - invalid </returns>
-        private bool ValidateText(string text)
-        {
-            return (new Regex(this.RegularExpression, RegexOptions.IgnoreCase)).IsMatch(text) && (MaxLength == int.MinValue || text.Length <= MaxLength);
-        }
-
-        /// <summary>
-        ///     Handle text selection
-        /// </summary>
-        /// <returns>true if the character was successfully removed; otherwise, false. </returns>
-        private bool TreatSelectedText(out string text)
-        {
-            text = null;
-            if (AssociatedObject.SelectionLength <= 0)
-                return false;
-
-            var length = this.AssociatedObject.Text.Length;
-            if (AssociatedObject.SelectionStart >= length)
-                return true;
-
-            if (AssociatedObject.SelectionStart + AssociatedObject.SelectionLength >= length)
-                AssociatedObject.SelectionLength = length - AssociatedObject.SelectionStart;
-
-            text = this.AssociatedObject.Text.Remove(AssociatedObject.SelectionStart, AssociatedObject.SelectionLength);
-            return true;
-        }
-        #endregion Auxiliary methods [PRIVATE] --------------------------------
+        else
+            e.CancelCommand();
     }
+    #endregion Event handlers [PRIVATE] -----------------------------------
+
+    #region Auxiliary methods [PRIVATE] -----------------------------------
+
+    /// <summary>
+    ///     Validate certain text by our regular expression and text length conditions
+    /// </summary>
+    /// <param name="text"> Text for validation </param>
+    /// <returns> True - valid, False - invalid </returns>
+    private bool validateText(string text)
+    {
+        return (new Regex(this.RegularExpression, RegexOptions.IgnoreCase)).IsMatch(text) && (MaxLength == int.MinValue || text.Length <= MaxLength);
+    }
+
+    /// <summary>
+    ///     Handle text selection
+    /// </summary>
+    /// <returns>true if the character was successfully removed; otherwise, false. </returns>
+    private bool treatSelectedText(out string text)
+    {
+        text = null;
+        if (AssociatedObject.SelectionLength <= 0)
+            return false;
+
+        var length = this.AssociatedObject.Text.Length;
+        if (AssociatedObject.SelectionStart >= length)
+            return true;
+
+        if (AssociatedObject.SelectionStart + AssociatedObject.SelectionLength >= length)
+            AssociatedObject.SelectionLength = length - AssociatedObject.SelectionStart;
+
+        text = this.AssociatedObject.Text.Remove(AssociatedObject.SelectionStart, AssociatedObject.SelectionLength);
+        return true;
+    }
+    #endregion Auxiliary methods [PRIVATE] --------------------------------
 }

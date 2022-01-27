@@ -1,19 +1,18 @@
 ﻿using System.Linq;
 
-namespace SortingVisualizer.ArrayGenerators
+namespace SortingVisualizer.ArrayGenerators;
+
+internal class ReverselySortedArrayGenerator : RandomizedArrayGenerator
 {
-    internal class ReverselySortedArrayGenerator : RandomizedArrayGenerator
+    public override string Name => "Reversely Sorted Array";
+    public override int[] Generate(int length)
     {
-        public override string Name => "Reversely Sorted Array";
-        public override int[] Generate(int length)
+        Random ??= new System.Random();
+        var array = new int[length];
+        for (var i = 0; i < array.Length; i++)
         {
-            if (random == null) random = new System.Random();
-            int[] array = new int[length];
-            for (int i = 0; i < array.Length; i++)
-            {
-                array[i] = random.Next(length);
-            }
-            return array.OrderByDescending(x => x).ToArray();
+            array[i] = Random.Next(length);
         }
+        return array.OrderByDescending(x => x).ToArray();
     }
 }

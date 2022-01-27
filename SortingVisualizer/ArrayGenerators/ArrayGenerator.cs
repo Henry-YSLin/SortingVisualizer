@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SortingVisualizer.ArrayGenerators
+namespace SortingVisualizer.ArrayGenerators;
+
+public abstract class ArrayGenerator
 {
-    public abstract class ArrayGenerator
-    {
-        public abstract string Name { get; }
-        public abstract int[] Generate(int length);
-    }
+    public abstract string Name { get; }
+    public abstract int[] Generate(int length);
 }

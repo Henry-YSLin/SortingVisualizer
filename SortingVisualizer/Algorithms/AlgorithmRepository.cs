@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SortingVisualizer.Visualizer;
 
-namespace SortingVisualizer
+namespace SortingVisualizer.Algorithms;
+
+internal class AlgorithmRepository
 {
-    internal class AlgorithmRepository
-    {
-        public List<IVisualizable> Algorithms { get; private set; }
+    public List<IVisualizable> Algorithms { get; }
 
-        public AlgorithmRepository()
-        {
-#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
-            Algorithms = typeof(IVisualizable).Assembly
-                .GetTypes()
-                .Where(x => x.IsAssignableTo(typeof(IVisualizable)) && !x.IsAbstract)
-                .Select(x => (IVisualizable?)Activator.CreateInstance(x))
-                .Where(x => x != null)
-                .ToList();
-#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
-        }
+    private AlgorithmRepository()
+    {
+        Algorithms = typeof(IVisualizable).Assembly
+            .GetTypes()
+            .Where(x => x.IsAssignableTo(typeof(IVisualizable)) && !x.IsAbstract)
+            .Select(x => (IVisualizable?)Activator.CreateInstance(x))
+            .Where(x => x != null)
+            .Select(x => x!)
+            .ToList();
     }
+
+    private static AlgorithmRepository? instance;
+
+    public static AlgorithmRepository Instance => instance ??= new AlgorithmRepository();
 }

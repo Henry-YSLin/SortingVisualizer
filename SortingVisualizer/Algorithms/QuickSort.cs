@@ -1,70 +1,66 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
+﻿using System.Collections.Generic;
+using SortingVisualizer.Visualizer;
 
-namespace SortingVisualizer.Algorithms
+namespace SortingVisualizer.Algorithms;
+
+internal class QuickSort : IVisualizable
 {
-    internal class QuickSort : IVisualizable
+    public string Name => "Quick Sort";
+
+    public IEnumerable<VisualizationFrame> Run(int[] array, IVisualizer visualizer)
     {
-        public string Name => "Quick Sort";
-        public async IAsyncEnumerable<int[]> Run(int[] array, IVisualizer visualizer, [EnumeratorCancellation] CancellationToken token)
+        foreach (VisualizationFrame frame in sort(array, 0, array.Length - 1))
         {
-            foreach (int[] snapshot in quickSort(array, 0, array.Length - 1, visualizer))
-            {
-                token.ThrowIfCancellationRequested();
-                yield return await visualizer.NewFrame(array);
-            }
-            yield return await visualizer.NewFrame(array);
+            yield return frame;
         }
 
-        private IEnumerable<int[]> quickSort(int[] array, int left, int right, IVisualizer visualizer)
+        yield return VisualizationFrame.From(array);
+    }
+
+    private static IEnumerable<VisualizationFrame> sort(IList<int> array, int left, int right)
+    {
+        if (left >= right)
+            yield break;
+
+        int pivot = partition(array, left, right);
+
+        yield return VisualizationFrame.From(array);
+
+        if (pivot > left)
+            foreach (VisualizationFrame frame in sort(array, left, pivot))
+            {
+                yield return frame;
+            }
+
+        if (pivot < right)
+            foreach (VisualizationFrame frame in sort(array, pivot + 1, right))
+            {
+                yield return frame;
+            }
+    }
+
+    private static int partition(IList<int> array, int left, int right)
+    {
+        int pivot = array[left];
+        while (true)
         {
+            while (array[left] < pivot)
+                left++;
+
+            while (array[right] > pivot)
+                right--;
+
             if (left < right)
             {
-                int pivot = partition(array, left, right);
-
-                yield return array.ToArray();
-
-                if (pivot > left)
-                    foreach (int[] snapshot in quickSort(array, left, pivot, visualizer))
-                    {
-                        yield return snapshot;
-                    }
-
-                if (pivot < right)
-                    foreach (int[] snapshot in quickSort(array, pivot + 1, right, visualizer))
-                    {
-                        yield return snapshot;
-                    }
-            }
-        }
-
-        private int partition(int[] array, int left, int right)
-        {
-            int pivot = array[left];
-            while (true)
-            {
-                while (array[left] < pivot)
-                    left++;
-
-                while (array[right] > pivot)
-                    right--;
-
-                if (left < right)
+                if (array[left] == array[right])
                 {
-                    if (array[left] == array[right])
-                    {
-                        left++;
-                        right--;
-                    }
-                    int temp = array[left];
-                    array[left] = array[right];
-                    array[right] = temp;
+                    left++;
+                    right--;
                 }
-                else return right;
+
+                (array[left], array[right]) = (array[right], array[left]);
             }
+            else return right;
         }
     }
 }

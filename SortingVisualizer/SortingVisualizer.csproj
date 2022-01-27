@@ -9,17 +9,11 @@
 
   <ItemGroup>
     <PackageReference Include="Expression.Blend.Sdk" Version="1.0.2" />
+    <PackageReference Include="JetBrains.Annotations" Version="2022.1.0-eap2" />
     <PackageReference Include="SharpDX" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct2D1" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="D3DWindow.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
 
 </Project>

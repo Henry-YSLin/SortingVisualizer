@@ -1,17 +1,16 @@
-﻿namespace SortingVisualizer.ArrayGenerators
+﻿namespace SortingVisualizer.ArrayGenerators;
+
+internal class RandomArrayGenerator : RandomizedArrayGenerator
 {
-    internal class RandomArrayGenerator : RandomizedArrayGenerator
+    public override string Name => "Random Array";
+    public override int[] Generate(int length)
     {
-        public override string Name => "Random Array";
-        public override int[] Generate(int length)
+        if (Random == null) Random = new System.Random();
+        int[] array = new int[length];
+        for (int i = 0; i < array.Length; i++)
         {
-            if (random == null) random = new System.Random();
-            int[] array = new int[length];
-            for (int i = 0; i < array.Length; i++)
-            {
-                array[i] = random.Next(length);
-            }
-            return array;
+            array[i] = Random.Next(length);
         }
+        return array;
     }
 }
