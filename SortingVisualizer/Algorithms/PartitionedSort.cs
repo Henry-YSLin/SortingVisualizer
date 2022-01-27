@@ -10,13 +10,17 @@ namespace SortingVisualizer
     {
         public string Name => "Partitioned Sort";
 
-        private int[] partition(int[] array, int partitionSize)
+        private int[] partitionSort(int[] array, int partitionSize)
         {
             for (int i = 0; i < array.Length; i += partitionSize)
             {
                 array.AsSpan().Slice(i, partitionSize).Sort();
             }
+            return array;
+        }
 
+        private int[] partitionDistribute(int[] array, int partitionSize)
+        {
             int[] processedArray = new int[array.Length];
             for (int i = 0; i < array.Length; i++)
             {
@@ -27,11 +31,23 @@ namespace SortingVisualizer
 
         public async IAsyncEnumerable<int[]> Run(int[] array, IVisualizer visualizer, [EnumeratorCancellation] CancellationToken token)
         {
+            array = partitionSort(array, 20);
             token.ThrowIfCancellationRequested();
             yield return await visualizer.NewFrame(array);
             await Task.Delay(2000);
-
-            array = partition(array, 20);
+            array = partitionDistribute(array, 20);
+            token.ThrowIfCancellationRequested();
+            yield return await visualizer.NewFrame(array);
+            await Task.Delay(2000);
+            array = partitionSort(array, 20);
+            token.ThrowIfCancellationRequested();
+            yield return await visualizer.NewFrame(array);
+            await Task.Delay(2000);
+            array = partitionDistribute(array, 20);
+            token.ThrowIfCancellationRequested();
+            yield return await visualizer.NewFrame(array);
+            await Task.Delay(2000);
+            array = partitionDistribute(array, 50);
             token.ThrowIfCancellationRequested();
             yield return await visualizer.NewFrame(array);
             await Task.Delay(2000);
