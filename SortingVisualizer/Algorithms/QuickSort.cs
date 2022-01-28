@@ -22,7 +22,11 @@ internal class QuickSort : IVisualizable
         if (left >= right)
             yield break;
 
-        int pivot = partition(array, left, right);
+        int pivot;
+        foreach (var frame in partition(array, left, right, out pivot))
+        {
+            yield return frame;
+        }
 
         yield return VisualizationFrame.From(array);
 
@@ -39,8 +43,9 @@ internal class QuickSort : IVisualizable
             }
     }
 
-    private static int partition(IList<int> array, int left, int right)
+    private static IEnumerable<VisualizationFrame> partition(IList<int> array, int left, int right, out int mid)
     {
+        var frames = new List<VisualizationFrame>();
         int pivot = array[left];
         while (true)
         {
@@ -59,8 +64,13 @@ internal class QuickSort : IVisualizable
                 }
 
                 (array[left], array[right]) = (array[right], array[left]);
+                frames.Add(VisualizationFrame.From(array));
             }
-            else return right;
+            else
+            {
+                mid = right;
+                return frames;
+            }
         }
     }
 }

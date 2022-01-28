@@ -9,6 +9,11 @@
              xmlns:vm="clr-namespace:SortingVisualizer.ViewModels"
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="1000" d:DataContext="{d:DesignInstance vm:VisualizerViewModel}">
+    <UserControl.InputBindings>
+        <KeyBinding
+            Key="Space"
+            Command="{Binding VisualizeCommand.Command}" />
+    </UserControl.InputBindings>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200" />
@@ -45,7 +50,8 @@
                 </i:Interaction.Behaviors>
             </TextBox>
             <!-- <ToggleButton Margin="0 5 0 0" IsChecked="{Binding IsPaused}">Pause</ToggleButton> -->
-            <Button Margin="0 5 0 0" Command="{Binding VisualizeCommand.Command}" Content="{Binding VisualizeCommand.DisplayName}"/>
+            <Button Margin="0 5 0 0" Command="{Binding VisualizeCommand.Command}"
+                    Content="{Binding VisualizeCommand.DisplayName}" />
         </StackPanel>
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
