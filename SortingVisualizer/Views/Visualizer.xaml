@@ -6,9 +6,9 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviours="clr-namespace:SortingVisualizer.Utilities"
              xmlns:views="clr-namespace:SortingVisualizer.Views"
+             xmlns:vm="clr-namespace:SortingVisualizer.ViewModels"
              mc:Ignorable="d"
-             d:DesignHeight="600" d:DesignWidth="1000"
-             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+             d:DesignHeight="600" d:DesignWidth="1000" d:DataContext="{d:DesignInstance vm:VisualizerViewModel}">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200" />
@@ -17,8 +17,8 @@
         <StackPanel Orientation="Vertical" Grid.Column="0" Margin="5">
             <TextBlock>Algorithm:</TextBlock>
             <ComboBox
-                ItemsSource="{Binding Algorithms}"
-                SelectedItem="{Binding Algorithm, Mode=TwoWay}">
+                ItemsSource="{Binding AlgorithmManager.Algorithms}"
+                SelectedItem="{Binding VisualizationSettings.Algorithm, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}" />
@@ -27,8 +27,8 @@
             </ComboBox>
             <TextBlock>Array:</TextBlock>
             <ComboBox
-                ItemsSource="{Binding Generators}"
-                SelectedItem="{Binding Generator, Mode=TwoWay}">
+                ItemsSource="{Binding ArrayGeneratorManager.Generators}"
+                SelectedItem="{Binding VisualizationSettings.Generator, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}" />
@@ -36,7 +36,7 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <TextBlock>Array size:</TextBlock>
-            <TextBox Text="{Binding ArrayLength, Mode=TwoWay}">
+            <TextBox Text="{Binding VisualizationSettings.ArrayLength, Mode=TwoWay}">
                 <i:Interaction.Behaviors>
                     <behaviours:TextBoxInputRegExBehaviour
                         RegularExpression="^\d+$"
@@ -44,8 +44,8 @@
                         EmptyValue="0" />
                 </i:Interaction.Behaviors>
             </TextBox>
-            <ToggleButton Margin="0 5 0 0" IsChecked="{Binding IsPaused}">Pause</ToggleButton>
-            <Button Margin="0 5 0 0" Click="ButtonVisualize_Click" Name="ButtonVisualize">Visualize</Button>
+            <!-- <ToggleButton Margin="0 5 0 0" IsChecked="{Binding IsPaused}">Pause</ToggleButton> -->
+            <Button Margin="0 5 0 0" Command="{Binding VisualizeCommand.Command}" Content="{Binding VisualizeCommand.DisplayName}"/>
         </StackPanel>
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
@@ -53,7 +53,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <views:VisualizationRenderer x:Name="Renderer" />
+            <views:VisualizationRenderer Frame="{Binding CurrentFrame}" />
             <Slider Grid.Row="1" HorizontalAlignment="Stretch" />
         </Grid>
     </Grid>

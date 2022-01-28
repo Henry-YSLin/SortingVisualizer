@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SortingVisualizer.ViewModels;
 
 namespace SortingVisualizer.ArrayGenerators;
 
-internal class ArrayGeneratorRepository
+public class ArrayGeneratorManager : ViewModelBase
 {
     public List<ArrayGenerator> Generators { get; }
 
-    private ArrayGeneratorRepository()
+    public ArrayGeneratorManager() : base("Array Generator Repository")
     {
         Generators = typeof(ArrayGenerator).Assembly
             .GetTypes()
@@ -18,8 +19,4 @@ internal class ArrayGeneratorRepository
             .Select(x => x!)
             .ToList();
     }
-
-    private static ArrayGeneratorRepository? instance;
-
-    public static ArrayGeneratorRepository Instance => instance ??= new ArrayGeneratorRepository();
 }

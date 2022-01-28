@@ -15,10 +15,10 @@ public class ViewModelBase : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    protected virtual void OnPropertyChanged(string? propertyName)
+    protected void OnPropertyChanged(string? propertyName)
     {
-        this.verifyPropertyName(propertyName);
-        PropertyChangedEventHandler? handler = this.PropertyChanged;
+        verifyPropertyName(propertyName);
+        PropertyChangedEventHandler? handler = PropertyChanged;
         if (handler != null)
         {
             var e = new PropertyChangedEventArgs(propertyName);

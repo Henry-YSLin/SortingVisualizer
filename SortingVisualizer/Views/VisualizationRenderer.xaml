@@ -9,6 +9,7 @@
         <Path
             Name="VisualizationPath"
             Stroke="Red"
+            ClipToBounds="True"
             SnapsToDevicePixels="True"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch" />

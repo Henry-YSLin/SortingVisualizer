@@ -10,7 +10,7 @@
     <Grid RenderOptions.EdgeMode="Aliased">
         <TabControl>
             <TabItem Header="Visualizer">
-                <views:Visualizer />
+                <ContentPresenter Content="{Binding Visualizer}" />
             </TabItem>
             <TabItem Header="Benchmarker">
                 <Grid>

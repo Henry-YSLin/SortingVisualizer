@@ -23,3 +23,10 @@ public class RelayCommand<T> : CommandBase<T>
         execute(parameter);
     }
 }
+
+public class RelayCommand : RelayCommand<object>
+{
+    public RelayCommand(Action<object?> execute, Predicate<object?>? canExecute = null) : base(execute, canExecute)
+    {
+    }
+}

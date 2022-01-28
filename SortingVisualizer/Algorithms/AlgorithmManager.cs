@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SortingVisualizer.ViewModels;
 using SortingVisualizer.Visualizer;
 
 namespace SortingVisualizer.Algorithms;
 
-internal class AlgorithmRepository
+public class AlgorithmManager : ViewModelBase
 {
     public List<IVisualizable> Algorithms { get; }
 
-    private AlgorithmRepository()
+    public AlgorithmManager() : base("Algorithm Repository")
     {
         Algorithms = typeof(IVisualizable).Assembly
             .GetTypes()
@@ -19,8 +20,4 @@ internal class AlgorithmRepository
             .Select(x => x!)
             .ToList();
     }
-
-    private static AlgorithmRepository? instance;
-
-    public static AlgorithmRepository Instance => instance ??= new AlgorithmRepository();
 }
