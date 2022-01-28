@@ -9,40 +9,51 @@ internal class Lysort : IVisualizable
 {
     public string Name => "Lysort";
 
-    private void merge(Span<int> run1, Span<int> run2, Span<int> destination)
+    private static IEnumerable<VisualizationFrame> merge(IList<int> source, IList<int> destination, int start1, int start2, int end)
     {
-        int i1 = 0;
-        int i2 = 0;
-        int j = 0;
+        int i1 = start1;
+        int i2 = start2;
+        int j = start1;
 
-        while (i1 < run1.Length && i2 < run2.Length)
+        while (i1 < start2 && i2 < end)
         {
-            if (run1[i1] <= run2[i2])
+            if (source[i1] <= source[i2])
             {
-                destination[j++] = run1[i1++];
+                destination[j++] = source[i1++];
             }
             else
             {
-                destination[j++] = run2[i2++];
+                destination[j++] = source[i2++];
             }
+
+            yield return VisualizationFrame.From(destination, new List<int> { i1, i2 });
         }
 
-        if (i1 < run1.Length)
-            while (i1 < run1.Length)
+        if (i1 < start2)
+            while (i1 < start2)
             {
-                destination[j++] = run1[i1++];
+                destination[j++] = source[i1++];
+                yield return VisualizationFrame.From(destination);
             }
 
-        if (i2 < run2.Length)
-            while (i2 < run2.Length)
+        if (i2 < end)
+            while (i2 < end)
             {
-                destination[j++] = run2[i2++];
+                destination[j++] = source[i2++];
+                yield return VisualizationFrame.From(destination);
             }
 
-        for (int i = 0; i < run1.Length; i++)
-            run1[i] = destination[i];
-        for (int i = 0; i < run2.Length; i++)
-            run2[i] = destination[i + run1.Length];
+        for (int i = start1; i < end; i++)
+            source[i] = destination[i];
+    }
+
+    private static IEnumerable<VisualizationFrame> reverse(IList<int> array, int start, int end)
+    {
+        for (int i = 0; i < (end - start) / 2; i++)
+        {
+            (array[start + i], array[end - 1 - i]) = (array[end - 1 - i], array[start + i]);
+            yield return VisualizationFrame.From(array, new List<int> { start + i, end - 1 - i });
+        }
     }
 
     public IEnumerable<VisualizationFrame> Run(int[] array, IVisualizer visualizer)
@@ -67,6 +78,8 @@ internal class Lysort : IVisualizable
                 startIndex = i;
                 direction = 0;
             }
+
+            yield return VisualizationFrame.From(array, new List<int> { i });
         }
 
         runs.Add(new RunSlice { StartIndex = startIndex, Length = array.Length - startIndex, IsReversed = direction == -1 });
@@ -74,8 +87,10 @@ internal class Lysort : IVisualizable
         {
             if (run.IsReversed)
             {
-                array.AsSpan().Slice(run.StartIndex, run.Length).Reverse();
-                yield return VisualizationFrame.From(array);
+                foreach (var frame in reverse(array, run.StartIndex, run.StartIndex + run.Length))
+                {
+                    yield return frame;
+                }
             }
         }
 
@@ -87,11 +102,14 @@ internal class Lysort : IVisualizable
                 if (i == runs.Count - 1) break;
                 RunSlice run1 = runs[i];
                 RunSlice run2 = runs[i + 1];
-                merge(array.AsSpan().Slice(run1.StartIndex, run1.Length), array.AsSpan().Slice(run2.StartIndex, run2.Length), sorted.AsSpan().Slice(run1.StartIndex, run1.Length + run2.Length));
+                foreach (var frame in merge(array, sorted, run1.StartIndex, run2.StartIndex, run1.StartIndex + run1.Length + run2.Length))
+                {
+                    yield return frame;
+                }
+
                 runs.RemoveAt(i);
                 runs.RemoveAt(i);
                 runs.Insert(i, new RunSlice { StartIndex = run1.StartIndex, Length = run1.Length + run2.Length, IsReversed = false });
-                yield return VisualizationFrame.From(sorted);
             }
         }
     }

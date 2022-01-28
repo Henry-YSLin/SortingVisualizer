@@ -20,7 +20,9 @@ public partial class VisualizationRenderer : UserControl
 
     private void render(VisualizationFrame frame)
     {
-        var group = new GeometryGroup();
+        var unaccessed = new GeometryGroup();
+        var accessed = new GeometryGroup();
+
         double height = VisualizationPath.ActualHeight - 1;
         int[] array = frame.Array;
 
@@ -30,10 +32,17 @@ public partial class VisualizationRenderer : UserControl
             Point p1 = new(i, height);
             var lineGeometry = new LineGeometry(p0, p1);
 
-            group.Children.Add(lineGeometry);
+            if (frame.AccessedIndices.Contains(i))
+                accessed.Children.Add(lineGeometry);
+            else
+                unaccessed.Children.Add(lineGeometry);
         }
 
-        VisualizationPath.Data = group;
+        unaccessed.Freeze();
+        accessed.Freeze();
+
+        VisualizationPath.Data = unaccessed;
+        VisualizationPathHighlight.Data = accessed;
     }
 
     public static readonly DependencyProperty FRAME_PROPERTY =

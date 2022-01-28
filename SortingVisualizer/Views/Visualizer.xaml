@@ -12,7 +12,7 @@
     <UserControl.InputBindings>
         <KeyBinding
             Key="Space"
-            Command="{Binding VisualizeCommand.Command}" />
+            Command="{Binding VisualizeCommand}" />
     </UserControl.InputBindings>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -50,7 +50,7 @@
                 </i:Interaction.Behaviors>
             </TextBox>
             <!-- <ToggleButton Margin="0 5 0 0" IsChecked="{Binding IsPaused}">Pause</ToggleButton> -->
-            <Button Margin="0 5 0 0" Command="{Binding VisualizeCommand.Command}"
+            <Button Margin="0 5 0 0" Command="{Binding VisualizeCommand}"
                     Content="{Binding VisualizeCommand.DisplayName}" />
         </StackPanel>
         <Grid Grid.Column="1">
@@ -59,7 +59,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <views:VisualizationRenderer Frame="{Binding CurrentFrame}" />
+            <ContentPresenter Content="{Binding CurrentFrame}" />
             <Slider Grid.Row="1" HorizontalAlignment="Stretch" />
         </Grid>
     </Grid>

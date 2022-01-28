@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Windows.Documents;
 using SortingVisualizer.Visualizer;
 
 namespace SortingVisualizer.Algorithms;
@@ -49,22 +50,31 @@ internal class QuickSort : IVisualizable
         int pivot = array[left];
         while (true)
         {
+            List<int> accessed = new();
             while (array[left] < pivot)
+            {
+                accessed.Add(left);
                 left++;
+            }
 
             while (array[right] > pivot)
+            {
+                accessed.Add(right);
                 right--;
+            }
 
             if (left < right)
             {
                 if (array[left] == array[right])
                 {
+                    accessed.Add(left);
+                    accessed.Add(right);
                     left++;
                     right--;
                 }
 
                 (array[left], array[right]) = (array[right], array[left]);
-                frames.Add(VisualizationFrame.From(array));
+                frames.Add(VisualizationFrame.From(array, accessed));
             }
             else
             {

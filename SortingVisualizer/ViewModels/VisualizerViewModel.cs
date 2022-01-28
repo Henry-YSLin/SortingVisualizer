@@ -6,6 +6,7 @@ using SortingVisualizer.Algorithms;
 using SortingVisualizer.ArrayGenerators;
 using SortingVisualizer.Commands;
 using SortingVisualizer.Visualizer;
+using ICommand = SortingVisualizer.Commands.ICommand;
 
 namespace SortingVisualizer.ViewModels;
 
@@ -43,14 +44,12 @@ public class VisualizerViewModel : ViewModelBase, IVisualizer
         set => SetAndNotify(ref currentFrame, value);
     }
 
-    private CommandViewModel? visualizeCommand;
+    private ICommand? visualizeCommand;
 
-    public CommandViewModel VisualizeCommand => visualizeCommand ??= new CommandViewModel(
+    public ICommand VisualizeCommand => visualizeCommand ??= new RelayCommand(
         "Visualize",
-        new RelayCommand(
-            _ => visualize(),
-            _ => VisualizationSettings.GetVisualizationInfo() != null
-        )
+        _ => visualize(),
+        _ => VisualizationSettings.GetVisualizationInfo() != null
     );
 
     private CancellationTokenSource? cancellation;

@@ -7,8 +7,9 @@ public class RelayCommand<T> : CommandBase<T>
     private readonly Action<T?> execute;
     private readonly Predicate<T?>? canExecute;
 
-    public RelayCommand(Action<T?> execute, Predicate<T?>? canExecute = null)
+    public RelayCommand(string displayName, Action<T?> execute, Predicate<T?>? canExecute = null)
     {
+        DisplayName = displayName;
         this.execute = execute ?? throw new ArgumentNullException(nameof(execute));
         this.canExecute = canExecute;
     }
@@ -22,11 +23,13 @@ public class RelayCommand<T> : CommandBase<T>
     {
         execute(parameter);
     }
+
+    public override string DisplayName { get; }
 }
 
 public class RelayCommand : RelayCommand<object>
 {
-    public RelayCommand(Action<object?> execute, Predicate<object?>? canExecute = null) : base(execute, canExecute)
+    public RelayCommand(string displayName, Action<object?> execute, Predicate<object?>? canExecute = null) : base(displayName, execute, canExecute)
     {
     }
 }
