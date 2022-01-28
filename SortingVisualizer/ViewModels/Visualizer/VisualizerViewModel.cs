@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using SortingVisualizer.Algorithms;
 using SortingVisualizer.ArrayGenerators;
 using SortingVisualizer.Commands;
 using SortingVisualizer.Visualizer;
-using ICommand = SortingVisualizer.Commands.ICommand;
 
-namespace SortingVisualizer.ViewModels;
+namespace SortingVisualizer.ViewModels.Visualizer;
 
 public class VisualizerViewModel : ViewModelBase, IVisualizer
 {

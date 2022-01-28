@@ -1,4 +1,5 @@
 ﻿using System;
+using SortingVisualizer.ViewModels.Visualizer;
 
 namespace SortingVisualizer.ViewModels;
 

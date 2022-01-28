@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace SortingVisualizer.Views;
+namespace SortingVisualizer.Views.Visualizer;
 
 public partial class Visualizer : UserControl
 {

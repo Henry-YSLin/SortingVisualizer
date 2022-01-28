@@ -1,7 +1,7 @@
 ﻿using SortingVisualizer.ArrayGenerators;
 using SortingVisualizer.Visualizer;
 
-namespace SortingVisualizer.ViewModels;
+namespace SortingVisualizer.ViewModels.Visualizer;
 
 public class VisualizationSettingsViewModel : ViewModelBase
 {

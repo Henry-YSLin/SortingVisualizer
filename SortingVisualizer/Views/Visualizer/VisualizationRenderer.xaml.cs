@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using SortingVisualizer.Visualizer;
 
-namespace SortingVisualizer.Views;
+namespace SortingVisualizer.Views.Visualizer;
 
 public partial class VisualizationRenderer : UserControl
 {

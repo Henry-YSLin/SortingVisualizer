@@ -3,17 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:SortingVisualizer.ViewModels"
              xmlns:views="clr-namespace:SortingVisualizer.Views"
-             xmlns:visualizer="clr-namespace:SortingVisualizer.Visualizer">
+             xmlns:visualizer="clr-namespace:SortingVisualizer.Visualizer"
+             xmlns:visualizerView="clr-namespace:SortingVisualizer.Views.Visualizer">
     <Application.Resources>
         <ResourceDictionary>
             <DataTemplate DataType="{x:Type vm:MainWindowViewModel}">
                 <views:MainWindow />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:VisualizerViewModel}">
-                <views:Visualizer />
+            <DataTemplate DataType="{x:Type vm:Visualizer.VisualizerViewModel}">
+                <visualizerView:Visualizer />
             </DataTemplate>
             <DataTemplate DataType="{x:Type visualizer:VisualizationFrame}">
-                <views:VisualizationRenderer Frame="{Binding}" />
+                <visualizerView:VisualizationRenderer Frame="{Binding}" />
             </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
