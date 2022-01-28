@@ -46,7 +46,7 @@ public partial class VisualizationRenderer : UserControl
     }
 
     public static readonly DependencyProperty FRAME_PROPERTY =
-        DependencyProperty.Register("Frame", typeof(VisualizationFrame), typeof(VisualizationRenderer),
+        DependencyProperty.Register(nameof(Frame), typeof(VisualizationFrame), typeof(VisualizationRenderer),
             new PropertyMetadata(null, framePropertyChanged));
 
     public VisualizationFrame? Frame

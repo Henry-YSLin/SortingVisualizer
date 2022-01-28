@@ -1,8 +1,10 @@
-﻿using System.Windows;
+﻿using System.Reflection;
+using System.Windows;
 using Autofac;
 using Autofac.Core;
 using SortingVisualizer.Algorithms;
 using SortingVisualizer.ArrayGenerators;
+using SortingVisualizer.Utilities;
 using SortingVisualizer.ViewModels;
 using SortingVisualizer.Views;
 
@@ -19,12 +21,18 @@ public partial class App : Application
         var builder = new ContainerBuilder();
 
         builder.RegisterInstance(new AlgorithmManager())
-            .AsSelf();
+            .AsSelf()
+            .PropertiesAutowired(
+                (propInfo, _) => propInfo.GetCustomAttribute(typeof(ResolvedAttribute)) != null);
         builder.RegisterInstance(new ArrayGeneratorManager())
-            .AsSelf();
+            .AsSelf()
+            .PropertiesAutowired(
+                (propInfo, _) => propInfo.GetCustomAttribute(typeof(ResolvedAttribute)) != null);
         builder.RegisterAssemblyTypes(typeof(App).Assembly)
             .Where(x => x.Name.EndsWith("ViewModel"))
-            .AsSelf();
+            .AsSelf()
+            .PropertiesAutowired(
+                (propInfo, _) => propInfo.GetCustomAttribute(typeof(ResolvedAttribute)) != null);
 
         var container = builder.Build();
 

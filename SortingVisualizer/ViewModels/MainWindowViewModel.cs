@@ -1,22 +1,21 @@
 ﻿using System;
+using SortingVisualizer.Utilities;
+using SortingVisualizer.ViewModels.Editor;
 using SortingVisualizer.ViewModels.Visualizer;
 
 namespace SortingVisualizer.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    private VisualizerViewModel visualizer;
+    [Resolved]
+    public VisualizerViewModel Visualizer { get; set; } = null!;
 
-    public VisualizerViewModel Visualizer
-    {
-        get => visualizer;
-        set => SetAndNotify(ref visualizer, value);
-    }
+    [Resolved]
+    public EditorViewModel Editor { get; set; } = null!;
 
-    public MainWindowViewModel(VisualizerViewModel visualizer, Action requestClose) : base("Main Window")
+    public MainWindowViewModel(Action requestClose) : base("Main Window")
     {
         RequestClose = requestClose;
-        this.visualizer = visualizer;
     }
 
     public Action RequestClose { get; init; }

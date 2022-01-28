@@ -4,17 +4,25 @@
              xmlns:vm="clr-namespace:SortingVisualizer.ViewModels"
              xmlns:views="clr-namespace:SortingVisualizer.Views"
              xmlns:visualizer="clr-namespace:SortingVisualizer.Visualizer"
-             xmlns:visualizerView="clr-namespace:SortingVisualizer.Views.Visualizer">
+             xmlns:visualizerView="clr-namespace:SortingVisualizer.Views.Visualizer"
+             xmlns:editorView="clr-namespace:SortingVisualizer.Views.Editor">
     <Application.Resources>
         <ResourceDictionary>
             <DataTemplate DataType="{x:Type vm:MainWindowViewModel}">
                 <views:MainWindow />
             </DataTemplate>
+
+            <!-- Visualizer -->
             <DataTemplate DataType="{x:Type vm:Visualizer.VisualizerViewModel}">
                 <visualizerView:Visualizer />
             </DataTemplate>
             <DataTemplate DataType="{x:Type visualizer:VisualizationFrame}">
                 <visualizerView:VisualizationRenderer Frame="{Binding}" />
+            </DataTemplate>
+
+            <!-- Editor -->
+            <DataTemplate DataType="{x:Type vm:Editor.EditorViewModel}">
+                <editorView:Editor />
             </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>

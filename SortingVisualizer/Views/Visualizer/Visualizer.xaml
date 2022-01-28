@@ -9,7 +9,8 @@
              xmlns:vm="clr-namespace:SortingVisualizer.ViewModels"
              xmlns:visualizer="clr-namespace:SortingVisualizer.ViewModels.Visualizer"
              mc:Ignorable="d"
-             d:DesignHeight="600" d:DesignWidth="1000" d:DataContext="{d:DesignInstance visualizer:VisualizerViewModel}">
+             d:DesignHeight="600" d:DesignWidth="1000"
+             d:DataContext="{d:DesignInstance visualizer:VisualizerViewModel}">
     <UserControl.InputBindings>
         <KeyBinding
             Key="Space"

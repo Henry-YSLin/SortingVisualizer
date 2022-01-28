@@ -4,32 +4,21 @@ using System.Threading.Tasks;
 using SortingVisualizer.Algorithms;
 using SortingVisualizer.ArrayGenerators;
 using SortingVisualizer.Commands;
+using SortingVisualizer.Utilities;
 using SortingVisualizer.Visualizer;
 
 namespace SortingVisualizer.ViewModels.Visualizer;
 
 public class VisualizerViewModel : ViewModelBase, IVisualizer
 {
-    private AlgorithmManager algorithmManager;
+    [Resolved]
+    public AlgorithmManager AlgorithmManager { get; set; } = null!;
 
-    public AlgorithmManager AlgorithmManager
+    [Resolved]
+    public ArrayGeneratorManager ArrayGeneratorManager { get; set; } = null!;
+
+    public VisualizerViewModel() : base("Visualizer")
     {
-        get => algorithmManager;
-        set => SetAndNotify(ref algorithmManager, value);
-    }
-
-    private ArrayGeneratorManager arrayGeneratorManager;
-
-    public ArrayGeneratorManager ArrayGeneratorManager
-    {
-        get => arrayGeneratorManager;
-        set => SetAndNotify(ref arrayGeneratorManager, value);
-    }
-
-    public VisualizerViewModel(AlgorithmManager algorithmManager, ArrayGeneratorManager arrayGeneratorManager) : base("Visualizer")
-    {
-        this.algorithmManager = algorithmManager;
-        this.arrayGeneratorManager = arrayGeneratorManager;
     }
 
     public VisualizationSettingsViewModel VisualizationSettings { get; } = new();
