@@ -39,11 +39,7 @@ public class EditorViewModel : ViewModelBase
         var existingAlgorithm = AlgorithmManager.Algorithms.FirstOrDefault(x => x is NativeLibraryAlgorithm);
         if (existingAlgorithm != null)
         {
-            AlgorithmManager.Algorithms.Remove(existingAlgorithm);
-            if (existingAlgorithm is IDisposable disposable)
-            {
-                disposable.Dispose();
-            }
+            AlgorithmManager.Remove(existingAlgorithm);
         }
 
         await new CppCodeCompiler(code.Text).CompileAsync();

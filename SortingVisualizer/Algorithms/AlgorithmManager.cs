@@ -23,6 +23,10 @@ public class AlgorithmManager : ViewModelBase
     public void Remove(IVisualizable algorithm)
     {
         Algorithms.Remove(algorithm);
+        if (algorithm is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
     }
 
     public void Add(IVisualizable algorithm)
