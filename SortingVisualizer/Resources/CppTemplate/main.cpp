@@ -50,3 +50,8 @@ EXTERN_C EXPORT void _cdecl freeVisualization(OutVisualization vis)
     }
     delete[] vis.Frames;
 }
+
+EXTERN_C EXPORT char *_cdecl getAlgorithmName()
+{
+    return getName();
+}

@@ -6,4 +6,6 @@
 
 EXTERN_C std::vector<Frame> runAlgorithm(int arr[], int size);
 
+EXTERN_C char *getName();
+
 #endif

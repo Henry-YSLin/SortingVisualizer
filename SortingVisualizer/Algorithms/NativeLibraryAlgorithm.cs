@@ -12,17 +12,24 @@ public class NativeLibraryAlgorithm : IVisualizable, IDisposable
     private readonly UnmanagedLibrary lib;
     private RunDelegate runFunction;
     private FreeDelegate freeFunction;
-    public string Name => "C++ Algorithm";
+    private NameDelegate nameFunction;
+    private string name = "Native Algorithm";
+    public string Name => name;
 
     private delegate NativeVisualization RunDelegate(IntPtr arr, int size);
 
     private delegate void FreeDelegate(NativeVisualization visualization);
+
+    private delegate IntPtr NameDelegate();
 
     public NativeLibraryAlgorithm(string dllFileName)
     {
         lib = new UnmanagedLibrary("algorithm.dll");
         runFunction = lib.GetUnmanagedFunction<RunDelegate>("run") ?? throw new Exception("Run function not found in the DLL.");
         freeFunction = lib.GetUnmanagedFunction<FreeDelegate>("freeVisualization") ?? throw new Exception("Free function not found in the DLL.");
+        nameFunction = lib.GetUnmanagedFunction<NameDelegate>("getAlgorithmName") ?? throw new Exception("Name function not found in the DLL.");
+        IntPtr namePtr = nameFunction();
+        name = Marshal.PtrToStringAnsi(namePtr) ?? name;
     }
 
     private static T[] convertToArray<T>(IntPtr source, int size)

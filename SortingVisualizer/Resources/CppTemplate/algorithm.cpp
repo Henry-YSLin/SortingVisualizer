@@ -2,6 +2,12 @@
 
 using namespace std;
 
+char *getName()
+{
+    return "C++ Algorithm";
+}
+
+
 vector<Frame> runAlgorithm(int arr[], int size)
 {
     vector<Frame> frames;

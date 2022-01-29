@@ -1,4 +1,6 @@
-﻿using ICSharpCode.AvalonEdit.Document;
+﻿using System;
+using System.Linq;
+using ICSharpCode.AvalonEdit.Document;
 using SortingVisualizer.Algorithms;
 using SortingVisualizer.Commands;
 using SortingVisualizer.Editor;
@@ -14,7 +16,6 @@ public class EditorViewModel : ViewModelBase
 
     public EditorViewModel() : base("Editor")
     {
-
     }
 
     private TextDocument code = new(ResourceStore.ALGORITHM_CPP.Value);
@@ -35,6 +36,16 @@ public class EditorViewModel : ViewModelBase
 
     private async void load()
     {
+        var existingAlgorithm = AlgorithmManager.Algorithms.FirstOrDefault(x => x is NativeLibraryAlgorithm);
+        if (existingAlgorithm != null)
+        {
+            AlgorithmManager.Algorithms.Remove(existingAlgorithm);
+            if (existingAlgorithm is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+        }
+
         await new CppCodeCompiler(code.Text).CompileAsync();
         var nativeAlgorithm = new NativeLibraryAlgorithm("algorithm.dll");
         AlgorithmManager.Add(nativeAlgorithm);

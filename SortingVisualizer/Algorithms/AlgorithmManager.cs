@@ -20,14 +20,13 @@ public class AlgorithmManager : ViewModelBase
             .Select(x => x!));
     }
 
+    public void Remove(IVisualizable algorithm)
+    {
+        Algorithms.Remove(algorithm);
+    }
+
     public void Add(IVisualizable algorithm)
     {
-        var existingAlgorithm = Algorithms.FirstOrDefault(x => x.Name == algorithm.Name);
-        if (existingAlgorithm != null)
-        {
-            Algorithms.Remove(existingAlgorithm);
-        }
-
         Algorithms.Add(algorithm);
     }
 }
