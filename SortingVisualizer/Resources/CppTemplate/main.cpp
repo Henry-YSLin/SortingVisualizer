@@ -7,6 +7,7 @@
 EXTERN_C struct EXPORT OutFrame
 {
     int *Array;
+    int ArrayLength;
     int *Accessed;
     int AccessedLength;
 };
@@ -27,6 +28,7 @@ EXTERN_C EXPORT OutVisualization _cdecl run(int arr[], int size)
     for (int i = 0; i < ret.size(); i++)
     {
         vis.Frames[i].Array = ret[i].array;
+        vis.Frames[i].ArrayLength = ret[i].size;
         vis.Frames[i].Accessed = new int[ret[i].accessed.size()];
         vis.Frames[i].AccessedLength = ret[i].accessed.size();
         for (int j = 0; j < ret[i].accessed.size(); j++)

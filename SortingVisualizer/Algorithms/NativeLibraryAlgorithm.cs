@@ -67,8 +67,8 @@ public class NativeLibraryAlgorithm : IVisualizable, IDisposable
             NativeFrame[] rawFrames = convertToArray<NativeFrame>(result.Frames, result.Length);
             foreach (var frame in rawFrames)
             {
-                int[] frameArray = new int[array.Length];
-                Marshal.Copy(frame.Array, frameArray, 0, array.Length);
+                int[] frameArray = new int[frame.ArrayLength];
+                Marshal.Copy(frame.Array, frameArray, 0, frame.ArrayLength);
 
                 int[] frameAccessed = new int[frame.AccessedLength];
                 Marshal.Copy(frame.Accessed, frameAccessed, 0, frame.AccessedLength);
@@ -95,6 +95,7 @@ public class NativeLibraryAlgorithm : IVisualizable, IDisposable
     private struct NativeFrame
     {
         public IntPtr Array;
+        public int ArrayLength;
         public IntPtr Accessed;
         public int AccessedLength;
     }
