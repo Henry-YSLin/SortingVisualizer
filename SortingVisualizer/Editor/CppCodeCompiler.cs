@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using SortingVisualizer.Resources;
 
 namespace SortingVisualizer.Editor;
 
@@ -19,10 +20,16 @@ public class CppCodeCompiler
     public async Task<FileInfo?> CompileAsync()
     {
         await File.WriteAllTextAsync(Path.Combine(working_directory, "algorithm.cpp"), code);
+        await Task.WhenAll(
+            File.WriteAllTextAsync(Path.Combine(working_directory, "algorithm.hpp"), ResourceStore.ALGORITHM_HPP.Value),
+            File.WriteAllTextAsync(Path.Combine(working_directory, "main.cpp"), ResourceStore.MAIN_CPP.Value),
+            File.WriteAllTextAsync(Path.Combine(working_directory, "visualizer.cpp"), ResourceStore.VISUALIZER_CPP.Value),
+            File.WriteAllTextAsync(Path.Combine(working_directory, "visualizer.hpp"), ResourceStore.VISUALIZER_HPP.Value)
+        );
 
         Process cmd = new Process();
         cmd.StartInfo.FileName = "g++.exe";
-        cmd.StartInfo.Arguments = "-shared -o algorithm.dll algorithm.cpp";
+        cmd.StartInfo.Arguments = "-shared visualizer.cpp algorithm.cpp main.cpp -o algorithm.dll";
         cmd.StartInfo.WorkingDirectory = working_directory;
         cmd.StartInfo.RedirectStandardOutput = true;
         cmd.StartInfo.RedirectStandardError = true;

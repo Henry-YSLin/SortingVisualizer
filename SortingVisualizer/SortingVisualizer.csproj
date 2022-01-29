@@ -5,7 +5,6 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +16,19 @@
     <PackageReference Include="SharpDX.Direct2D1" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\CppTemplate\algorithm.cpp" />
+    <Resource Include="Resources\CppTemplate\algorithm.cpp" />
+    <None Remove="Resources\CppTemplate\algorithm.hpp" />
+    <Resource Include="Resources\CppTemplate\algorithm.hpp" />
+    <None Remove="Resources\CppTemplate\main.cpp" />
+    <Resource Include="Resources\CppTemplate\main.cpp" />
+    <None Remove="Resources\CppTemplate\visualizer.cpp" />
+    <Resource Include="Resources\CppTemplate\visualizer.cpp" />
+    <None Remove="Resources\CppTemplate\visualizer.hpp" />
+    <Resource Include="Resources\CppTemplate\visualizer.hpp" />
   </ItemGroup>
 
 </Project>

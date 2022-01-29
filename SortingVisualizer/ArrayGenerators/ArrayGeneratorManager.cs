@@ -14,7 +14,7 @@ public class ArrayGeneratorManager : ViewModelBase
     {
         Generators = new ObservableCollection<ArrayGenerator>(typeof(ArrayGenerator).Assembly
             .GetTypes()
-            .Where(x => x.IsSubclassOf(typeof(ArrayGenerator)) && !x.IsAbstract)
+            .Where(x => x.IsSubclassOf(typeof(ArrayGenerator)) && !x.IsAbstract && x.GetConstructor(Array.Empty<Type>()) != null)
             .Select(x => (ArrayGenerator?)Activator.CreateInstance(x))
             .Where(x => x != null)
             .Select(x => x!));

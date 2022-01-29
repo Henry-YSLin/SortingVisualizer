@@ -14,14 +14,15 @@
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
             <Button
-                Command="{Binding CompileCommand}"
-                Content="{Binding CompileCommand.DisplayName}" />
-            <Button
                 Command="{Binding LoadCommand}"
                 Content="{Binding LoadCommand.DisplayName}" />
         </StackPanel>
         <avalonEdit:TextEditor
             Grid.Row="1"
+            Margin="5"
+            Padding="5"
+            BorderBrush="Gray"
+            BorderThickness="1"
             xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
             FontFamily="Consolas"
             Document="{Binding Code}"
