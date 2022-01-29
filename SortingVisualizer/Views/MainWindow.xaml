@@ -6,8 +6,7 @@
         xmlns:views="clr-namespace:SortingVisualizer.Views"
         xmlns:vm="clr-namespace:SortingVisualizer.ViewModels"
         mc:Ignorable="d"
-        Title="Sorting Visualizer" Height="450" Width="800"
-        WindowState="Maximized"
+        Title="Sorting Visualizer" Height="800" Width="1200"
         d:DataContext="{d:DesignInstance vm:MainWindowViewModel}">
     <Grid RenderOptions.EdgeMode="Aliased">
         <TabControl>
